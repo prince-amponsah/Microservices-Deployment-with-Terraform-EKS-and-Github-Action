@@ -1,9 +1,5 @@
 terraform/.terraform/
-.terraform.lock.hcl
-*.tfstate
-*.tfstate.backup
-.terragrunt-cache/
-crash.log
-override.tf
-override.tf.json
-*_override.tf
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/.terraform.lock.hcl
+terraform/crash.loggit 

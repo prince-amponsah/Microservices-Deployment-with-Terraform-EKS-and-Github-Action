@@ -3,7 +3,7 @@ name: EKS/VPC/RDS Infrastructure Terraform Deployment
 on:
   push:
     branches:
-      - main
+      # - master
     paths:
       - 'terraform/**'
   workflow_dispatch:
