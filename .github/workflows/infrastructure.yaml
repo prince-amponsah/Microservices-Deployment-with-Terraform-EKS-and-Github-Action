@@ -1,13 +1,13 @@
 name: EKS/VPC/RDS Infrastructure Terraform Deployment
 on:
-  #push:
-  #   branches:
-  #   - main
-  # paths:
-  #  - 'terraform/automode/**'
   push:
     branches:
-      - main
+    - main
+  # paths:
+  #  - 'terraform/automode/**'
+# on:
+#   push:
+#     branches: [ main ]
     paths:
       - "terraform/**"
   workflow_dispatch:
