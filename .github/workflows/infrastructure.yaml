@@ -1,13 +1,9 @@
 name: EKS/VPC/RDS Infrastructure Terraform Deployment
+
 on:
   push:
     branches:
-    - main
-  # paths:
-  #  - 'terraform/automode/**'
-# on:
-#   push:
-#     branches: [ main ]
+      - main
     paths:
       - "terraform/**"
   workflow_dispatch:
@@ -27,11 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-<<<<<<< HEAD:.github/workflows/infrastructure.yaml
-        working-directory: terraform/
-=======
         working-directory: terraform
->>>>>>> e2f638c995e9e012b1d3adb0f133b1395cef4883:.github/workflow/infrastructure.yaml
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
