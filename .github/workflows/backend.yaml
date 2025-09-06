@@ -8,6 +8,10 @@ on:
       - "backend/**"   # only trigger if backend changes
   workflow_dispatch:   # allow manual trigger
 
+permissions:
+  id-token: write   # ✅ Required for OIDC auth
+  contents: read 
+
 jobs:
   build:
     runs-on: ubuntu-latest
