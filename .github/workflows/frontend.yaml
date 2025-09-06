@@ -1,0 +1,70 @@
+name: Node.js Front - Build and Push to ECR
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/**"   # only trigger if backend changes
+  workflow_dispatch:   # allow manual trigger
+
+permissions:
+  id-token: write   # ✅ Required for OIDC auth
+  contents: read 
+jobs:  # ensure infra is deployed first
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2 
+
+      # Configure AWS credentials
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: arn:aws:iam::773587062517:role/EKS-UseAlways
+      #     aws-region: us-west-2
+
+      # Log in to Amazon ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Build, tag, and push Docker image
+      - name: Build, Tag, and Push Docker image
+        run: |
+          IMAGE_REPO_NAME=kwesi-frontend-app
+          IMAGE_TAG=${GITHUB_SHA::7}   # short git commit hash
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          REGION=us-west-2
+          ECR_URI=773587062517.dkr.ecr.us-west-2.amazonaws.com/kwesi-frontend-app
+
+          echo "Building Docker image..."
+          docker build -t $IMAGE_REPO_NAME ./frontend
+
+          echo "Tagging Docker image..."
+          docker tag $IMAGE_REPO_NAME:latest $ECR_URI:$IMAGE_TAG
+          docker tag $IMAGE_REPO_NAME:latest $ECR_URI:latest
+
+          echo "Pushing Docker image to ECR..."
+          docker push $ECR_URI:$IMAGE_TAG
+          docker push $ECR_URI:latest
+
+    #   # (Optional) Output image URI for deploy steps
+    #   - name: Image URI
+    #     run: echo "Image pushed: $ECR_URI:$IMAGE_TAG"
+    #     env:
+    #       ACCOUNT_ID: ${{ steps.login-ecr.outputs.account_id }}
+    #       REGION: us-east-1
+    #       IMAGE_REPO_NAME: my-node-backend
+    #       IMAGE_TAG: ${{ github.sha }}
+    #       ECR_URI: ${{ steps.login-ecr.outputs.account_id }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.IMAGE_REPO_NAME }}:${{ env.IMAGE_TAG }}
