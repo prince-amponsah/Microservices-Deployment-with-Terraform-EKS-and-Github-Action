@@ -11,7 +11,13 @@ on:
 permissions:
   id-token: write   # ✅ Required for OIDC auth
   contents: read 
-jobs:  # ensure infra is deployed first
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  IMAGE_REPO_NAME: ${{ secrets.BACKEND_IMAGE_REPO_NAME }}
+
+jobs:
   build:
     runs-on: ubuntu-latest
 
@@ -20,19 +26,12 @@ jobs:  # ensure infra is deployed first
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      # Configure AWS credentials (OIDC role assumption)
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2 
-
-      # Configure AWS credentials
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v4
-      #   with:
-      #     role-to-assume: arn:aws:iam::773587062517:role/EKS-UseAlways
-      #     aws-region: us-west-2
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
 
       # Log in to Amazon ECR
       - name: Login to Amazon ECR
@@ -42,11 +41,8 @@ jobs:  # ensure infra is deployed first
       # Build, tag, and push Docker image
       - name: Build, Tag, and Push Docker image
         run: |
-          IMAGE_REPO_NAME=kwesi-back-app
           IMAGE_TAG=${GITHUB_SHA::7}   # short git commit hash
-          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-          REGION=us-west-2
-          ECR_URI=773587062517.dkr.ecr.us-west-2.amazonaws.com/kwesi-back-app
+          ECR_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_REPO_NAME}
 
           echo "Building Docker image..."
           docker build -t $IMAGE_REPO_NAME ./backend
@@ -58,13 +54,3 @@ jobs:  # ensure infra is deployed first
           echo "Pushing Docker image to ECR..."
           docker push $ECR_URI:$IMAGE_TAG
           docker push $ECR_URI:latest
-
-    #   # (Optional) Output image URI for deploy steps
-    #   - name: Image URI
-    #     run: echo "Image pushed: $ECR_URI:$IMAGE_TAG"
-    #     env:
-    #       ACCOUNT_ID: ${{ steps.login-ecr.outputs.account_id }}
-    #       REGION: us-east-1
-    #       IMAGE_REPO_NAME: my-node-backend
-    #       IMAGE_TAG: ${{ github.sha }}
-    #       ECR_URI: ${{ steps.login-ecr.outputs.account_id }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.IMAGE_REPO_NAME }}:${{ env.IMAGE_TAG }}
