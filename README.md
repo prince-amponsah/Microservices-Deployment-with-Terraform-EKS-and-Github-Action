@@ -1,4 +1,4 @@
-# AWS EKS Kubernetes Project with Terraform and CICD WITH Github Actions
+# AWS EKS Kubernetes Project with Terraform,VPC and Github Actions CICD
 
 This project provisions a secure, production grade Kubernetes platform on AWS to deploy and manage a containerised version of a NodeJs Web Application, all powered by Terraform, EKS, VPC and GitHub Actions. 
 It showcases of the monolitic Architecture, cloud native architecture, CICD automation with Github Action, and modular infrastructure design.
