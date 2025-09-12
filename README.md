@@ -32,8 +32,9 @@ It showcases of the monolitic Architecture, cloud native architecture, CICD auto
 Steps to Run Locally
 ### 1. Clone the Repo
 ```
-git clone https://github.com/ayubfarahh/EKS-Project.git
-cd EKS-Project
+git clone https://github.com/ayubfarahh/EKS-Project.git](https://github.com/Learn-It-Right-Way/lirw-react-node-mysql-app.git
+cd into dir and follow instructions here:
+
 ```
 
 ### 2. Start a Local Cluster
