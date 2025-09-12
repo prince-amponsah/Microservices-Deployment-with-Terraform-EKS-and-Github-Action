@@ -27,17 +27,17 @@ It showcases of the monolitic Architecture, cloud native architecture, CICD auto
 -  <img width="2031" height="2386" alt="Vpc-EKS-Terraform" src="https://github.com/user-attachments/assets/231ea0be-5c1b-404e-befa-6c1c65253f7b" />
 
 
-## Local App Setup
+## Local Or THREE TIER VPC SETUP
 
 Steps to Run Locally
 ### 1. Clone the Repo
 ```
 git clone https://github.com/ayubfarahh/EKS-Project.git](https://github.com/Learn-It-Right-Way/lirw-react-node-mysql-app.git
 cd into dir and follow instructions here:
+https://github.com/Learn-It-Right-Way/lirw-react-node-mysql-app
 
 ```
-
-### 2. Start a Local Cluster
+## EKS Setup With Terraform and Github Actions:
 
 ```
 
